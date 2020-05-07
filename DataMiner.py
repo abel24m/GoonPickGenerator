@@ -5,14 +5,24 @@ import time
 class DataMiner(object):
 
     url = "https://whispering-bayou-49673.herokuapp.com/"
-    MAPS_MINIMUM = 1
-    NUMBER_OF_MATCHES = 10
+    MAPS_MINIMUM = 0
+    NUMBER_OF_MATCHES = 8
     OVERTIME_SCORE = 16
-    specialCases = [2340256]
 
 
-    def __init__(self):
+    def __init__(self, MAPS_MINIMUM):
         super(DataMiner, self).__init__()
+        self.MAPS_MINIMUM = MAPS_MINIMUM
+
+    def doesPlayerExist(self,name):
+        params = {"name" : name}
+        response = requests.get(self.url + "player", params = params)
+        status = response.status_code
+        if str(status).startswith('5'):
+            print("Player named " + name + "does not exist")
+            return False
+        else :
+            return True
 
     def getPlayerKpr(self,name):
         params = {"name" : name}
@@ -76,6 +86,7 @@ class DataMiner(object):
                                 return 0
                 if count >= self.MAPS_MINIMUM :
                     break;
+                print(parsedResults[0])
         return totalRounds
 
     def __getMatchTotalsWithOvertime(self, matchID):

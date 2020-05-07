@@ -1,6 +1,5 @@
 
 class Player(object):
-    """docstring for Player."""
 
     def __init__(self, name, prizepick):
         self.name = name
@@ -10,5 +9,3 @@ class Player(object):
         self.prjKills = 0
         self.avgRoundsWithOvertime = 0
         self.prjKillsWithOvertime = 0
-
-        
