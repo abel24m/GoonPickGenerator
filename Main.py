@@ -14,9 +14,7 @@ playerExist = True
 if not testmode:
     numOfMaps = input("How many maps do you want to use for projections 1 or 2: ")
     while response == "y" :
-        while correct == "n" and playerExist:
-            name = input("Please enter a name : ")
-            correct = input("Is " + name + " correct? [y/n]")
+        name = input("Please enter a name : ")
         prizepick = input("Please enter the PrizePick projection : ")
         player = Player(name, prizepick)
         players.append(player)

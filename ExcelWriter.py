@@ -4,6 +4,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 class ExcelWriter(object):
 
+    rowNumber = 2
+
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
@@ -21,10 +23,9 @@ class ExcelWriter(object):
             count += 1
 
     def populateExcel(self, playerData):
-        rowNumber = 2
         iterator = 1
         for data in playerData:
-            self.sheet.update_cell(rowNumber, iterator, data)
+            self.sheet.update_cell(self.rowNumber, iterator, data)
             iterator += 1
-        rowNumber += 1
+        self.rowNumber += 1
         pass
