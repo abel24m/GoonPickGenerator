@@ -86,7 +86,6 @@ class DataMiner(object):
                                 return 0
                 if count >= self.MAPS_MINIMUM :
                     break;
-                print(parsedResults[0])
         return totalRounds
 
     def __getMatchTotalsWithOvertime(self, matchID):
@@ -103,7 +102,6 @@ class DataMiner(object):
                     if "-" not in roundsParsed:
                         count += 1
                         for rounds in roundsParsed :
-                                print(parsedResults[0])
                                 totalRounds += int(rounds)
                 if count >= self.MAPS_MINIMUM:
                     break;
