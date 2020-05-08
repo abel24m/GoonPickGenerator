@@ -12,7 +12,7 @@ class DataMiner(object):
 
     def __init__(self, MAPS_MINIMUM):
         super(DataMiner, self).__init__()
-        self.MAPS_MINIMUM = MAPS_MINIMUM
+        self.MAPS_MINIMUM = int(MAPS_MINIMUM)
 
     def doesPlayerExist(self,name):
         params = {"name" : name}

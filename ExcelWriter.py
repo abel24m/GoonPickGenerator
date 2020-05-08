@@ -11,7 +11,7 @@ class ExcelWriter(object):
 
     # Find a workbook by name and open the first sheet
     # Make sure you use the right name here.
-    sheet = client.open('CS:GO Prize Picks').get_worksheet(2)
+    sheet = client.open('CS:GO Prize Picks').get_worksheet(1)
 
     def __init__(self):
         titles = ["Player", "PrizePick", "Projected Kills", "Spread", "Prj Kills w/Overtime", "Spd w/Overtime"]
