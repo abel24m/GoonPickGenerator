@@ -18,7 +18,12 @@ if not testmode:
         prizepick = input("Please enter the PrizePick projection : ")
         player = Player(name, prizepick)
         players.append(player)
-        response = input("Do you want to add another player? [y/n] : ")
+        while True:
+            response = input("Do you want to add another player? [y/n] : ")
+            if response == 'y' or response == 'n':
+                break
+            else:
+                print("Please enter 'y' or 'n'.")
         correct = "n"
 else :
     player = Player("Jame", 41.5)
