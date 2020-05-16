@@ -5,7 +5,7 @@ from DataMiner import DataMiner
 from ExcelWriter import ExcelWriter
 
 
-testmode = 0
+testmode = 1
 players = []
 
 response = "y"
@@ -26,8 +26,9 @@ if not testmode:
                 print("Please enter 'y' or 'n'.")
         correct = "n"
 else :
+    numOfMaps = 2
     player = Player("Jame", 41.5)
-    self.players.append(player)
+    players.append(player)
 
 
 ExcelWriter = ExcelWriter()
@@ -40,7 +41,8 @@ for player in players:
         player.prjKills = player.kpr*player.avgRounds
         player.avgRoundsWithOvertime = dataMiner.getAverageRoundsPerSeries(player.name, True)
         player.prjKillsWithOvertime = player.kpr*player.avgRoundsWithOvertime
-        spread = player.prjKills - float(player.prizepick)
-        spreadWithOvertime = player.prjKillsWithOvertime - float(player.prizepick)
-        playerData = [player.name, player. prizepick, player.prjKills, spread, player.prjKillsWithOvertime, spreadWithOvertime]
+        player.spread = player.prjKills - float(player.prizepick)
+        player.spreadWithOvertime = player.prjKillsWithOvertime - float(player.prizepick)
+        player.totalSpreadCombined = abs(player.spread + player.spreadWithOvertime)
+        playerData = [player.name, player. prizepick, player.prjKills, player.spread, player.prjKillsWithOvertime, player.spreadWithOvertime, ]
         ExcelWriter.populateExcel(playerData)

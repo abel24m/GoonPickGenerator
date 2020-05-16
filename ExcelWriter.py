@@ -13,10 +13,10 @@ class ExcelWriter(object):
 
     # Find a workbook by name and open the first sheet
     # Make sure you use the right name here.
-    sheet = client.open('CS:GO Prize Picks').worksheet("Tali")
+    sheet = client.open('CS:GO Prize Picks').worksheet("TestSheet")
 
     def __init__(self):
-        titles = ["Player", "PrizePick", "Projected Kills", "Spread", "Prj Kills w/Overtime", "Spd w/Overtime"]
+        titles = ["Player", "PrizePick", "Projected Kills", "Spread", "Prj Kills w/Overtime", "Spd w/Overtime", "totalSpreadCombined"]
         count = 1
         for title in titles:
             self.sheet.update_cell(1, count, title)

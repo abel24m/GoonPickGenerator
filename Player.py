@@ -9,3 +9,7 @@ class Player(object):
         self.prjKills = 0
         self.avgRoundsWithOvertime = 0
         self.prjKillsWithOvertime = 0
+        self.percentageOfConfidence = 0.0
+        self.totalSpreadCombined = 0
+        self.spread = 0
+        self.spreadWithOvertime = 0
