@@ -44,5 +44,5 @@ for player in players:
         player.spread = player.prjKills - float(player.prizepick)
         player.spreadWithOvertime = player.prjKillsWithOvertime - float(player.prizepick)
         player.totalSpreadCombined = abs(player.spread + player.spreadWithOvertime)
-        playerData = [player.name, player. prizepick, player.prjKills, player.spread, player.prjKillsWithOvertime, player.spreadWithOvertime, ]
+        playerData = [player.name, player. prizepick, player.prjKills, player.spread, player.prjKillsWithOvertime, player.spreadWithOvertime]
         ExcelWriter.populateExcel(playerData)
