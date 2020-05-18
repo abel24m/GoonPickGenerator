@@ -32,6 +32,7 @@ class DataMiner(object):
 
     def getAverageRoundsPerSeries(self, name, withOvertime):
         print("-------- " + name + " -----------")
+        print("Getting Average Rounds with Overtime : " + str(withOvertime))
         teamID = self.__getPlayerTeamID(name)
         params = {"teamid" : teamID}
         teamData = requests.get(self.url + "team", params = params).json()
@@ -64,11 +65,7 @@ class DataMiner(object):
 
     def __getMatchTotals(self, matchID):
         params = {"matchid" : matchID}
-        try:
-            matchData = requests.get(self.url + "match", params = params).json()
-        except:
-            print("I got stuck. Trying Again")
-            self.__getMatchTotals(matchID)
+        matchData = requests.get(self.url + "match", params = params).json()
         matchTotal = 0
         totalRounds = 0
         if len(matchData["maps"]) >= self.MAPS_MINIMUM :
