@@ -4,7 +4,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 class ExcelWriter(object):
 
-    rowNumber = 2
+    rowNumber = 4
 
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
@@ -13,10 +13,11 @@ class ExcelWriter(object):
 
     # Find a workbook by name and open the first sheet
     # Make sure you use the right name here.
-    sheet = client.open('CS:GO Prize Picks').worksheet("Tali")
+    sheet = client.open('CS:GO Prize Picks').worksheet("TestSheet")
 
     def __init__(self):
-        titles = ["Player", "PrizePick", "Projected Kills", "Spread", "Prj Kills w/Overtime", "Spd w/Overtime"]
+        titles = ["Player", "PrizePick", "Projected Kills", "Spread", "Prj Kills w/Overtime", "Spd w/Overtime",
+                "Total Combined Spread", "Team Average Kills", "Team Total Projected Kills", "Opp Average Kills", "Opp Total Kills", "GreenLight"]
         count = 1
         for title in titles:
             self.sheet.update_cell(1, count, title)

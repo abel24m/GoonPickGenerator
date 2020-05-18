@@ -9,3 +9,8 @@ class Player(object):
         self.prjKills = 0
         self.avgRoundsWithOvertime = 0
         self.prjKillsWithOvertime = 0
+        self.spread = 0
+        self.spreadWithOvertime = 0
+
+    def __repr__(self):
+        return self.name

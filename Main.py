@@ -1,12 +1,17 @@
 import requests
 import json
+import threading
 from Player import Player
 from DataMiner import DataMiner
 from ExcelWriter import ExcelWriter
+from Matchup import Matchup
+from PickSummary import PickSummary
 
 
-testmode = 0
-players = []
+
+
+testmode = 0    #To run the code in test mode 1=testmode 0=not in testmode
+players = []    #List of players that are in prizepicks and we will be building projections for
 
 response = "y"
 correct = "n"
@@ -27,7 +32,8 @@ if not testmode:
         correct = "n"
 else :
     player = Player("Jame", 41.5)
-    self.players.append(player)
+    players.append(player)
+    numOfMaps = 2
 
 
 ExcelWriter = ExcelWriter()
@@ -35,12 +41,18 @@ dataMiner = DataMiner(numOfMaps)
 for player in players:
     if dataMiner.doesPlayerExist(player.name):
         print("Starting Data Mine on " + player.name)
+        playerMatchUp = dataMiner.evaluateMatchup(player.name)
         player.kpr = dataMiner.getPlayerKpr(player.name)
         player.avgRounds = dataMiner.getAverageRoundsPerSeries(player.name, False)
         player.prjKills = player.kpr*player.avgRounds
         player.avgRoundsWithOvertime = dataMiner.getAverageRoundsPerSeries(player.name, True)
         player.prjKillsWithOvertime = player.kpr*player.avgRoundsWithOvertime
-        spread = player.prjKills - float(player.prizepick)
-        spreadWithOvertime = player.prjKillsWithOvertime - float(player.prizepick)
-        playerData = [player.name, player. prizepick, player.prjKills, spread, player.prjKillsWithOvertime, spreadWithOvertime]
+        player.spread = player.prjKills - float(player.prizepick)
+        player.spreadWithOvertime = player.prjKillsWithOvertime - float(player.prizepick)
+        totalCombinedSpread = abs(player.spread + player.spreadWithOvertime)
+        pickSummary = PickSummary(player, playerMatchUp)
+        pickSummary.calculateGreenLight()
+        playerData = [player.name, player. prizepick, player.prjKills, player.spread, player.prjKillsWithOvertime,
+                    player.spreadWithOvertime, totalCombinedSpread, playerMatchUp.teamOne.averageKills,
+                    playerMatchUp.teamOne.totalKills, playerMatchUp.teamTwo.averageKills, playerMatchUp.teamTwo.totalKills, pickSummary.greenLight]
         ExcelWriter.populateExcel(playerData)
