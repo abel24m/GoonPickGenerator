@@ -16,7 +16,6 @@ class ExcelWriter(object):
     sheet = client.open('CS:GO Prize Picks').worksheet("Tali")
 
     def __init__(self):
-        self.sheet.clear()
         titles = ["Player", "PrizePick", "Projected Kills", "Spread", "Prj Kills w/Overtime", "Spd w/Overtime", "totalSpreadCombined"]
         count = 1
         for title in titles:
