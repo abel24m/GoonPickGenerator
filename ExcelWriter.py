@@ -4,7 +4,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 class ExcelWriter(object):
 
-    rowNumber = 4
+    rowNumber = 8
 
     # use creds to create a client to interact with the Google Drive API
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
