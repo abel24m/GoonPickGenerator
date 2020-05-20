@@ -17,6 +17,7 @@ response = "y"
 correct = "n"
 playerExist = True
 if not testmode:
+    rowStart = input("What row do you wish to start writing in the excel : ")
     numOfMaps = input("How many maps do you want to use for projections 1 or 2: ")
     while response == "y" :
         name = input("Please enter a name : ")
@@ -36,7 +37,7 @@ else :
     numOfMaps = 2
 
 
-ExcelWriter = ExcelWriter()
+ExcelWriter = ExcelWriter(rowStart)
 dataMiner = DataMiner(numOfMaps)
 for player in players:
     if dataMiner.doesPlayerExist(player.name):

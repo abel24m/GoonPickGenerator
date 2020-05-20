@@ -17,12 +17,12 @@ class PickSummary(object):
     def calculateGreenLight(self):
         self.__calculateAverageKillsLine()
         self.__calculateTotalKillsLine()
-        if self.averageKillsLine != self.totalKillsLine :
+        if self.player.spread < 0 and (self.averageKillsLine is self.UNDER and self.totalKillsLine is self.UNDER):
+            self.greenLight = "True"
+        elif self.player.spread > 0 and (self.averageKillsLine is self.OVER and self.totalKillsLine is self.OVER):
+            self.greenLight = "True"
+        else :
             self.greenLight = "False"
-        elif self.averageKills and self.totalKills < 0:
-            self.greenLight = "True"
-        elif self.averageKills and self.totalKills > 0:
-            self.greenLight = "True"
         return self.greenLight
 
 
