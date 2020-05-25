@@ -40,7 +40,7 @@ class DataMiner(object):
         totalRounds = 0
         getcalls = 0
         for match in teamData["recentResults"]:
-            time.sleep(1)
+            time.sleep(1.5)
             if match["result"] != "-:-":
                 matchId = match["matchID"]
                 getcalls += 1
@@ -65,7 +65,12 @@ class DataMiner(object):
 
     def __getMatchTotals(self, matchID):
         params = {"matchid" : matchID}
-        matchData = requests.get(self.url + "match", params = params).json()
+        response = requests.get(self.url + "match", params = params)
+        if response.status_code is 200:
+            matchData = response.json()
+        else:
+            print("got response code of : " + str(response.status_code))
+            return 0
         matchTotal = 0
         totalRounds = 0
         if len(matchData["maps"]) >= self.MAPS_MINIMUM :
@@ -87,7 +92,12 @@ class DataMiner(object):
 
     def __getMatchTotalsWithOvertime(self, matchID):
         params = {"matchid" : matchID}
-        matchData = requests.get(self.url + "match", params = params).json()
+        response = requests.get(self.url + "match", params = params)
+        if response.status_code is 200 :
+            matchData = response.json()
+        else:
+            print("got response code of : " + str(response.status_code))
+            return 0
         matchTotal = 0
         totalRounds = 0
         if len(matchData["maps"]) >= self.MAPS_MINIMUM :
