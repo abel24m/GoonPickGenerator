@@ -1,5 +1,5 @@
 from Matchup import Matchup
-from Player import Player
+from Sport_Structures.Player import Player
 
 class PickSummary(object):
 

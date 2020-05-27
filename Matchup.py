@@ -1,5 +1,5 @@
 
-from Team import Team
+from Sport_Structures.Team import Team
 
 class Matchup(object):
 

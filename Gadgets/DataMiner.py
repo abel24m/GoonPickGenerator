@@ -1,8 +1,8 @@
 
 import requests
 import time
-from Team import Team
-from Player import Player
+from Sport_Structures.Team import Team
+from Sport_Structures.Player import Player
 from Matchup import Matchup
 
 class DataMiner(object):
@@ -11,35 +11,113 @@ class DataMiner(object):
     MAPS_MINIMUM = 0
     NUMBER_OF_MATCHES = 8
     OVERTIME_SCORE = 16
-    MAX_NUM_OF_RETRIES = 5
+    MAX_NUM_OF_RETRIES = 3
 
 
-    def __init__(self, MAPS_MINIMUM):
-        super(DataMiner, self).__init__()
-        self.MAPS_MINIMUM = int(MAPS_MINIMUM)
+    def __init__(self):
+        pass
 
-    def doesPlayerExist(self,name):
-        params = {"name" : name}
-        response = requests.get(self.url + "player", params = params)
-        status = response.status_code
-        if str(status).startswith('5'):
-            print("Player named " + name + "does not exist")
-            return False
-        else :
-            return True
-
-    def getPlayerKpr(self,name):
-        params = {"name" : name}
+    def getPlayerData(self,player):
+        self.__getPlayerID(player)
+        params = {"playerid" : player.playerid}
         numOfTries = 0
-        while numOfTries < self.MAX_NUM_OF_RETRIES :
-            try :
-                playerData = requests.get(self.url + "player", params = params).json()
+        while numOfTries is not self.MAX_NUM_OF_RETRIES :
+            response = requests.get(self.url + "playerstats", params = params)
+            if response.status_code is 200:
+                playerData = response.json()
                 break
-            except :
+            else :
+                print ("Error Getting Player Data")
+                print (self.url + "playerstats?playerid=" + str(player.playerid))
+                print (response)
+                time.sleep(3)
+                print("Trying Again...")
                 numOfTries += 1
-                print("Error trying to ket KPR.........trying again")
-        kpr = playerData["statistics"]["killsPerRound"]
-        return kpr
+        if numOfTries is self.MAX_NUM_OF_RETRIES:
+            return 0
+        player.kpr = playerData["statistics"]["killsPerRound"]
+        player.team = playerData["team"]["name"]
+        player.teamid = playerData["team"]["id"]
+        return 1
+
+
+    def getTeamData(self,team):
+        self.__getTeamOpponent(team)
+        params = {"teamid" : team.teamid}
+        numOfTries = 0
+        while numOfTries is not self.MAX_NUM_OF_RETRIES :
+            response = requests.get(self.url + "teamstats", params = params)
+            if response.status_code is 200:
+                teamData = response.json()
+                break
+            else:
+                print("Error Getting Team Data")
+                print (self.url + "teamstats?teamid=" + team.teamid)
+                print (response)
+                time.sleep(3)
+                print("Trying Again...\n")
+                numOfTries += 1
+        if numOfTries is self.MAX_NUM_OF_RETRIES:
+            return 0
+        #Grab Roster
+        for player in teamData["currentLineup"]:
+                newPlayer = Player(player["name"], -1, 0)
+                self.getPlayerData(newPlayer)
+                team.roster.append(newPlayer)
+        #Grab and Calculate Average Rounds per Match
+        numOfMatches = 0
+        totalRounds = 0
+        for match in teamData["matches"] :
+            result = match["result"]
+            result = result.split()
+            totalRounds += int(result[0]) + int(result[2])
+            numOfMatches += 1
+            if numOfMatches >= 25 :
+                break
+        team.averageRoundsPerMatch = totalRounds/float(numOfMatches)
+        return 1
+
+    def __getTeamOpponent(self, team):
+        params = {"teamid" : team.teamid}
+        numOfTries = 0
+        while numOfTries is not self.MAX_NUM_OF_RETRIES :
+            response = requests.get(self.url + "team", params = params)
+            if response.status_code is 200:
+                teamData = response.json()
+                break
+            else:
+                print("Error Getting Team Data")
+                print (self.url + "team?teamid=" + team.teamid)
+                print (response)
+                time.sleep(3)
+                print("Trying Again...\n")
+                numOfTries += 1
+        if numOfTries is self.MAX_NUM_OF_RETRIES:
+            return 0
+        #Populate Opponent Data
+        team.opponentName = teamData["recentResults"][0]["enemyTeam"]["name"]
+        team.opponentID = teamData["recentResults"][0]["enemyTeam"]["id"]
+
+    def __getPlayerID(self,player):
+        params = {"name" : player.name}
+        numOfTries = 0
+        while numOfTries is not self.MAX_NUM_OF_RETRIES :
+            response = requests.get(self.url + "player", params = params)
+            if response.status_code is 200:
+                playerData = response.json()
+                break
+            else :
+                print ("Error Getting Player ID")
+                print (self.url + "player?name=" + player.name)
+                print (response)
+                time.sleep(2.5)
+                print("Trying Again...")
+                numOfTries += 1
+        if numOfTries is self.MAX_NUM_OF_RETRIES :
+            return 0
+        player.playerid = playerData["id"]
+
+
 
     def getAverageRoundsPerSeries(self, name, withOvertime):
         print("-------- " + name + " -----------")
@@ -50,7 +128,7 @@ class DataMiner(object):
         totalRounds = 0
         getcalls = 0
         for match in teamData["recentResults"]:
-            time.sleep(1)
+            time.sleep(1.5)
             if match["result"] != "-:-":
                 matchId = match["matchID"]
                 getcalls += 1
@@ -114,27 +192,14 @@ class DataMiner(object):
         oppTeamID = teamData["recentResults"][0]["enemyTeam"]["id"]
         return oppTeamID
 
-    def __getPlayerTeamName(self, playerName):
-        params = {"name" : playerName}
-        playerData = requests.get(self.url + "player", params = params).json()
-        teamName = playerData["team"]["name"]
-        return teamName
-
-
-    def __getPlayerTeamID(self,name):
-        params = {"name" : name}
-        playerData = requests.get(self.url + "player", params = params).json()
-        teamName = playerData["team"]["name"]
-        teamID = playerData["team"]["id"]
-        return teamID
-
     def __getMatchTotals(self, matchID):
         params = {"matchid" : matchID}
-        try:
-            matchData = requests.get(self.url + "match", params = params).json()
-        except:
-            print("I got stuck. Trying Again")
-            self.__getMatchTotals(matchID)
+        response = requests.get(self.url + "match", params = params)
+        if response.status_code is 200:
+            matchData = response.json()
+        else:
+            print("got response code of : " + str(response.status_code))
+            return 0
         matchTotal = 0
         totalRounds = 0
         if len(matchData["maps"]) >= self.MAPS_MINIMUM :
@@ -156,7 +221,12 @@ class DataMiner(object):
 
     def __getMatchTotalsWithOvertime(self, matchID):
         params = {"matchid" : matchID}
-        matchData = requests.get(self.url + "match", params = params).json()
+        response = requests.get(self.url + "match", params = params)
+        if response.status_code is 200 :
+            matchData = response.json()
+        else:
+            print("got response code of : " + str(response.status_code))
+            return 0
         matchTotal = 0
         totalRounds = 0
         if len(matchData["maps"]) >= self.MAPS_MINIMUM :
