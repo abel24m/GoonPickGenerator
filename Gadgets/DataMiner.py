@@ -75,6 +75,14 @@ class DataMiner(object):
             if numOfMatches >= 25 :
                 break
         team.averageRoundsPerMatch = totalRounds/float(numOfMatches)
+        #Get Team Overview Stats
+        team.kdRatio = teamData["overview"]["kdRatio"]
+        wins = teamData["overview"]["wins"]
+        losses = teamData["overview"]["losses"]
+        team.winPercentage = float(wins)/(wins+losses)
+        #Get Map Stats
+        for map, stats in teamData["mapStats"].items() :
+            team.mapStats[map] = stats
         return 1
 
     def __getTeamOpponent(self, team):

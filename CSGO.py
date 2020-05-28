@@ -40,6 +40,11 @@ class CSGO(object):
         self.__process_PlayerData()
         self.__process_TeamData()
 
+    def caculate_results(self):
+        pass
+        #calculateWinStats
+
+
 
     def output_Results(self) :
         self.excelWriter.csgo_output_Results(self.metaData)
@@ -56,16 +61,25 @@ class CSGO(object):
             player.spread = abs(player.spread)
 
     def __process_TeamData(self):
-        for key, teamDict in self.metaData["matchups"].items() :
+        for teamDict in self.metaData["matchups"].values() :
             team = teamDict["team"]
-            prjTeamKills = 0
-            for player in team.roster :
-                player.prjKills = (float(player.kpr) * team.averageRoundsPerMatch) * 2
-                prjTeamKills += player.prjKills
-            team.prjKills = prjTeamKills
-
-            #add the opponent to the team matchups
+            self.__calculate_TeamProjectedKills(team)
+            #add the opponent to the team matchups get opponent data if not in data
             opponentName = team.opponentName
-            teamDict["opponent"] = self.metaData["matchups"].get(opponentName)["team"]
-            print("\n")
-            print(self.metaData["matchups"])
+            opponentDict = self.metaData["matchups"].get(opponentName)
+            if not opponentDict:
+                print("No opponent")
+                opponent = Team(team.opponentName, team.opponentID)
+                opponentDict = dict()
+                self.dataMiner.getTeamData(opponent)
+                self.__calculate_TeamProjectedKills(opponent)
+                opponentDict["team"] = opponent
+                opponentDict["opponent"] = team
+            teamDict["opponent"] = opponentDict["team"]
+
+    def __calculate_TeamProjectedKills(self,team):
+        prjTeamKills = 0
+        for player in team.roster :
+            player.prjKills = (float(player.kpr) * team.averageRoundsPerMatch) * 2
+            prjTeamKills += player.prjKills
+        team.prjKills = prjTeamKills

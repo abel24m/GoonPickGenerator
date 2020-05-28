@@ -25,7 +25,7 @@ class ExcelWriter(object):
         self.__print_CSGO_Teams(csgo_metaData)
 
     def __print_CSGO_Players(self, csgo_metaData) :
-        titles = ["Player", "PrizePick", "Projected Kills", "Spread", "Under/Over"]
+        titles = ["Player", "PrizePick", "Projected Kills", "Spread", "Under/Over", "Team"]
         count = 1
         for title in titles:
             self.sheet.update_cell(1, count, title)
@@ -41,7 +41,7 @@ class ExcelWriter(object):
             self.rowNumber += 1
 
     def __print_CSGO_Teams(self, csgo_metaData) :
-        titles = ["Team", "Projected Team Kills"]
+        titles = ["Team", "Projected Team Kills", "Opponent", "Projected Opponent Kills", "Projected Winner", "Difference"]
         count = 1
         for title in titles:
             self.sheet.update_cell(self.rowNumber-1, count, title)
@@ -50,8 +50,25 @@ class ExcelWriter(object):
         for key, teamDict in csgo_metaData["matchups"].items():
             team = teamDict["team"]
             opponent = teamDict["opponent"]
-            self.sheet.update_cell(self.rowNumber, iterator, team.name)
-            self.sheet.update_cell(self.rowNumber, iterator + 1, team.prjKills)
-            self.sheet.update_cell(self.rowNumber, iterator + 2, opponent.name)
-            self.sheet.update_cell(self.rowNumber, iterator + 3, opponent.prjKills)
-            self.rowNumber += 1
+            print(team)
+            print(opponent)
+            if opponent:
+                if team.prjKills > opponent.prjKills :
+                    winner = team
+                else:
+                    winner = opponent
+                self.sheet.update_cell(self.rowNumber, iterator, team.name)
+                self.sheet.update_cell(self.rowNumber, iterator + 1, team.prjKills)
+                self.sheet.update_cell(self.rowNumber, iterator + 2, opponent.name)
+                self.sheet.update_cell(self.rowNumber, iterator + 3, opponent.prjKills)
+                self.sheet.update_cell(self.rowNumber, iterator + 4, winner.name)
+                self.sheet.update_cell(self.rowNumber, iterator + 5, abs(team.prjKills-opponent.prjKills))
+                self.rowNumber += 1
+            else :
+                self.sheet.update_cell(self.rowNumber, iterator, team.name)
+                self.sheet.update_cell(self.rowNumber, iterator + 1, team.prjKills)
+                self.sheet.update_cell(self.rowNumber, iterator + 2, "Not in Database")
+                self.sheet.update_cell(self.rowNumber, iterator + 3, "Not in Database")
+                self.sheet.update_cell(self.rowNumber, iterator + 4, "Not in Database")
+                self.sheet.update_cell(self.rowNumber, iterator + 5, "Not in Database")
+                self.rowNumber += 1

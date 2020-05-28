@@ -9,6 +9,9 @@ class Team(object):
         self.roster = []
         self.averageRoundsPerMatch = 0
         self.prjKills = 0
+        self.kdRatio = None
+        self.winPercentage = None
+        self.mapStats = dict()
 
     def __str__(self):
         line1 = "Team Name : " + self.name + "\n"
